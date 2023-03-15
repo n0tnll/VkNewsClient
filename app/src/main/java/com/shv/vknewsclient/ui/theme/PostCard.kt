@@ -18,10 +18,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.shv.vknewsclient.R
 
 @Composable
@@ -33,81 +35,106 @@ fun FeedScreen() {
         backgroundColor = MaterialTheme.colors.background
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clip(CircleShape)
-                        .background(Color.White),
-                    painter = painterResource(id = R.drawable.post_comunity_thumbnail),
-                    contentDescription = null
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                ) {
-                    Text(
-                        text = "/dev/null",
-                        color = MaterialTheme.colors.onPrimary
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "14:00",
-                        fontStyle = FontStyle.Normal,
-                        fontWeight = FontWeight.Thin,
-                        color = MaterialTheme.colors.onSecondary
-                    )
-                }
-                Icon(
-                    imageVector = Icons.Rounded.MoreVert,
-                    contentDescription = null,
-                    tint = MaterialTheme.colors.onSecondary
-                )
-            }
-            Text(
-                text = "кабаныч, когда узнал, что если сотрудникам не платить они умирают от голода",
-                modifier = Modifier
-                    .padding(top = 8.dp)
-            )
-
-            Image(
-                modifier = Modifier
-                    .padding(top = 8.dp, bottom = 8.dp),
-                painter = painterResource(id = R.drawable.post_content_image),
-                contentDescription = null,
-                contentScale = ContentScale.FillWidth
-            )
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(text = "208")
-                Image(
-                    painter = painterResource(id = R.drawable.ic_views_counter),
-                    contentDescription = null
-                )
-                Text(text = "206")
-                Image(
-                    painter = painterResource(id = R.drawable.ic_share),
-                    contentDescription = null
-                )
-                Text(text = "11")
-                Image(
-                    painter = painterResource(id = R.drawable.ic_comment),
-                    contentDescription = null
-                )
-                Text(text = "491")
-                Image(
-                    painter = painterResource(id = R.drawable.ic_like),
-                    contentDescription = null
-                )
-            }
+            PostHeader()
+            PostContent()
         }
+    }
+}
+
+@Composable
+private fun PostHeader() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            modifier = Modifier
+                .size(50.dp)
+                .clip(CircleShape)
+                .background(Color.White),
+            painter = painterResource(id = R.drawable.post_comunity_thumbnail),
+            contentDescription = null
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Column(
+            modifier = Modifier
+                .weight(1f)
+        ) {
+            Text(
+                text = "/dev/null",
+                color = MaterialTheme.colors.onPrimary
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "14:00",
+                fontStyle = FontStyle.Normal,
+                fontWeight = FontWeight.Thin,
+                color = MaterialTheme.colors.onSecondary
+            )
+        }
+        Icon(
+            imageVector = Icons.Rounded.MoreVert,
+            contentDescription = null,
+            tint = MaterialTheme.colors.onSecondary
+        )
+    }
+}
+
+@Composable
+private fun PostContent() {
+    Spacer(modifier = Modifier.height(8.dp))
+    Text(
+        text = stringResource(R.string.template_text),
+        color = MaterialTheme.colors.onPrimary,
+        fontSize = 14.sp
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    Image(
+        modifier = Modifier.fillMaxWidth(),
+        painter = painterResource(id = R.drawable.post_content_image),
+        contentDescription = null,
+        contentScale = ContentScale.FillWidth,
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    Statistics()
+}
+
+@Composable
+private fun Statistics() {
+    Row(
+    ) {
+        Row(modifier = Modifier.weight(1f)) {
+            IconWithText(iconResId = R.drawable.ic_views_counter, text = "916")
+        }
+        Row(
+            modifier = Modifier.weight(1f),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            IconWithText(iconResId = R.drawable.ic_share, text = "7")
+            IconWithText(iconResId = R.drawable.ic_comment, text = "11")
+            IconWithText(iconResId = R.drawable.ic_like, text = "465")
+        }
+    }
+}
+
+@Composable
+private fun IconWithText(
+    iconResId: Int,
+    text: String
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(id = iconResId),
+            contentDescription = null,
+            tint = MaterialTheme.colors.onSecondary
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = text,
+            color = MaterialTheme.colors.onSecondary
+        )
     }
 }
 
