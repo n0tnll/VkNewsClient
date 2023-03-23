@@ -1,17 +1,18 @@
 package com.shv.vknewsclient
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.shv.vknewsclient.ui.theme.VkNewsClientTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,57 +24,49 @@ class MainActivity : ComponentActivity() {
 }
 
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 private fun Test() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Example3()
-    }
-}
-
-@Composable
-private fun Example1() {
-    OutlinedButton(onClick = { /*TODO*/ }) {
-        Text(text = "Hello, World!")
-    }
-}
-
-@Composable
-private fun Example2() {
-    TextField(
-        value = "Value",
-        onValueChange = { },
-        label = { Text(text = "Label") }
-    )
-}
-
-@Composable
-private fun Example3() {
-    AlertDialog(
-        onDismissRequest = { /*TODO*/ },
-        title = {
-            Text(text = "Are you sure?")
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = "Top AppBar Title")
+                },
+                navigationIcon = {
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(Icons.Filled.Menu, contentDescription = null)
+                    }
+                }
+            )
         },
-        text = {
-            Text(text = "Do you want to delete this file?")
-        },
-        confirmButton = {
-            TextButton(onClick = { /*TODO*/ }) {
-                Text(
-                    text = "Yes",
-                    color = MaterialTheme.colors.onSecondary
-                )
+        bottomBar = {
+            val items = listOf("One", "Two", "Three")
+
+            BottomNavigation() {
+                items.forEachIndexed { index, item ->
+                    BottomNavigationItem(
+                        icon = {
+                               Icon(Icons.Filled.Email, contentDescription = null)
+                        },
+                        label = { Text(text = item) },
+                        selected = true,
+                        onClick = { /*TODO*/ }
+                    )
+                }
             }
         },
-        dismissButton = {
-            TextButton(onClick = { /*TODO*/ }) {
-                Text(
-                    text = "No",
-                    color = MaterialTheme.colors.onSecondary
-                )
-            }
+        drawerContent = {
+            Text(text = "Text1")
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(text = "Text2")
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(text = "Text3")
         }
-    )
+    ) {
+        Text(
+            modifier = Modifier.padding(it),
+            text = "This is scaffold content"
+        )
+    }
 }
