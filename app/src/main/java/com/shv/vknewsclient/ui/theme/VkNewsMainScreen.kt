@@ -15,7 +15,10 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun MainScreen() {
-    val snackBarHostState = SnackbarHostState()
+    val snackBarHostState = remember {
+        SnackbarHostState()
+    }
+    Log.d("MainScreen", snackBarHostState.currentSnackbarData.toString())
     val scope = rememberCoroutineScope()
     val fabIsVisible = remember {
         mutableStateOf(true)
