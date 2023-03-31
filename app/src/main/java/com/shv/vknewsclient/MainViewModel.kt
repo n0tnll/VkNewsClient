@@ -8,13 +8,19 @@ import com.shv.vknewsclient.domain.StatisticItem
 
 class MainViewModel : ViewModel() {
 
-    private val _feedPost = MutableLiveData(FeedPost())
-    val feedPost: LiveData<FeedPost> = _feedPost
+    private val initialList = mutableListOf<FeedPost>().apply {
+        repeat(10) {
+            add(FeedPost(id = it))
+        }
+    }
 
-    fun updateCount(item: StatisticItem) {
-        val oldStatistics = feedPost.value?.statistics
-            ?: throw IllegalStateException("Unknown statistic item $item")
-        val updateStatistics = oldStatistics.toMutableList().apply {
+    private val _feedPosts = MutableLiveData<List<FeedPost>>(initialList)
+    val feedPosts: LiveData<List<FeedPost>> = _feedPosts
+
+    fun updateCount(feedPost: FeedPost, item: StatisticItem) {
+        val oldPost = feedPosts.value?.toMutableList() ?: mutableListOf()
+        val oldStatistics = feedPost.statistics
+        val newStatistics = oldStatistics.toMutableList().apply {
             replaceAll { oldItem ->
                 if (oldItem.type == item.type) {
                     oldItem.copy(count = oldItem.count + 1)
@@ -23,6 +29,21 @@ class MainViewModel : ViewModel() {
                 }
             }
         }
-        _feedPost.value = feedPost.value?.copy(statistics = updateStatistics)
+        val newFeedPost = feedPost.copy(statistics = newStatistics)
+        _feedPosts.value = oldPost.apply {
+            replaceAll {
+                if (it.id == newFeedPost.id) {
+                    newFeedPost
+                } else {
+                    it
+                }
+            }
+        }
+    }
+
+    fun remove(feedPost: FeedPost) {
+        val feedPostsList = feedPosts.value?.toMutableList() ?: mutableListOf()
+        feedPostsList.remove(feedPost)
+        _feedPosts.value = feedPostsList
     }
 }
