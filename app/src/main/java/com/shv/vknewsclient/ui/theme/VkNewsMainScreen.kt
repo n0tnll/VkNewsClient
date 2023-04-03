@@ -2,13 +2,18 @@ package com.shv.vknewsclient.ui.theme
 
 import androidx.compose.foundation.clickable
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.shv.vknewsclient.MainViewModel
 import com.shv.vknewsclient.navigation.AppNavGraph
+import com.shv.vknewsclient.navigation.Screen
 
 @Composable
 fun MainScreen(
@@ -37,7 +42,15 @@ fun MainScreen(
                             Text(text = stringResource(id = item.titleResId))
                         },
                         selected = currentRout == item.screen.route,
-                        onClick = { navHostController.navigate(item.screen.route) },
+                        onClick = {
+                            navHostController.navigate(item.screen.route) {
+                                popUpTo(Screen.NewsFeed.route) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
                         selectedContentColor = MaterialTheme.colors.onPrimary,
                         unselectedContentColor = MaterialTheme.colors.onSecondary
                     )
@@ -62,7 +75,7 @@ fun MainScreen(
 
 @Composable
 private fun TextCounter(name: String) {
-    var count by remember {
+    var count by rememberSaveable {
         mutableStateOf(0)
     }
     Text(
