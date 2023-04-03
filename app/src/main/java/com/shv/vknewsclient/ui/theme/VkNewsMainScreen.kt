@@ -10,21 +10,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.shv.vknewsclient.MainViewModel
 import com.shv.vknewsclient.navigation.AppNavGraph
-import com.shv.vknewsclient.navigation.Screen
+import com.shv.vknewsclient.navigation.rememberNavigationState
 
 @Composable
-fun MainScreen(
-    viewModel: MainViewModel
-) {
-    val navHostController = rememberNavController()
+fun MainScreen(viewModel: MainViewModel) {
+    val navigationState = rememberNavigationState()
 
     Scaffold(
         bottomBar = {
             BottomNavigation {
-                val navBackStackEntry by navHostController.currentBackStackEntryAsState()
+                val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
                 val currentRout = navBackStackEntry?.destination?.route
 
                 val items = listOf(
@@ -43,13 +40,7 @@ fun MainScreen(
                         },
                         selected = currentRout == item.screen.route,
                         onClick = {
-                            navHostController.navigate(item.screen.route) {
-                                popUpTo(Screen.NewsFeed.route) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
+                            navigationState.navigateTo(item.screen.route)
                         },
                         selectedContentColor = MaterialTheme.colors.onPrimary,
                         unselectedContentColor = MaterialTheme.colors.onSecondary
@@ -59,7 +50,7 @@ fun MainScreen(
         }
     ) { paddingValues ->
         AppNavGraph(
-            navHostController = navHostController,
+            navHostController = navigationState.navHostController,
             homeScreenContent = {
                 HomeScreen(paddingValues = paddingValues, viewModel = viewModel)
             },
