@@ -23,7 +23,8 @@ import com.shv.vknewsclient.domain.PostComment
 @Composable
 fun CommentsScreen(
     feedPost: FeedPost,
-    commentList: List<PostComment>
+    commentList: List<PostComment>,
+    onBackPressed: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -31,7 +32,7 @@ fun CommentsScreen(
                 title = { Text(text = "Comments for FeedPost id: ${feedPost.id}") },
                 backgroundColor = MaterialTheme.colors.primary,
                 navigationIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { onBackPressed() }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = null
