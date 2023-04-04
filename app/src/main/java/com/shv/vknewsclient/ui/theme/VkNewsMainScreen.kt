@@ -9,6 +9,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.shv.vknewsclient.domain.FeedPost
 import com.shv.vknewsclient.navigation.AppNavGraph
+import com.shv.vknewsclient.navigation.Screen
 import com.shv.vknewsclient.navigation.rememberNavigationState
 
 @Composable
@@ -51,22 +52,22 @@ fun MainScreen() {
     ) { paddingValues ->
         AppNavGraph(
             navHostController = navigationState.navHostController,
-            homeScreenContent = {
-                if (commentsToPost.value == null) {
-                    HomeScreen(
-                        paddingValues = paddingValues,
-                        onCommentsClickListener = {
-                            commentsToPost.value = it
-                        }
-                    )
-                } else {
-                    CommentsScreen(
-                        feedPost = commentsToPost.value!!,
-                        onBackPressed = {
-                            commentsToPost.value = null
-                        }
-                    )
-                }
+            newsFeedScreenContent = {
+                HomeScreen(
+                    paddingValues = paddingValues,
+                    onCommentsClickListener = {
+                        commentsToPost.value = it
+                        navigationState.navigateTo(Screen.Comments.route)
+                    }
+                )
+            },
+            commentsScreenContent = {
+                CommentsScreen(
+                    feedPost = commentsToPost.value!!,
+                    onBackPressed = {
+                        commentsToPost.value = null
+                    }
+                )
             },
             favouriteScreenContent = {
                 TextCounter(name = "Favourite screen")
