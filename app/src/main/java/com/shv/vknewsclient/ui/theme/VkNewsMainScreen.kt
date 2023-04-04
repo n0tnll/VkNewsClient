@@ -6,10 +6,10 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.shv.vknewsclient.domain.FeedPost
 import com.shv.vknewsclient.navigation.AppNavGraph
-import com.shv.vknewsclient.navigation.Screen
 import com.shv.vknewsclient.navigation.rememberNavigationState
 
 @Composable
@@ -23,7 +23,6 @@ fun MainScreen() {
         bottomBar = {
             BottomNavigation {
                 val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
-                val currentRout = navBackStackEntry?.destination?.route
 
                 val items = listOf(
                     NavigationItem.Home,
@@ -32,6 +31,11 @@ fun MainScreen() {
                 )
 
                 items.forEach { item ->
+
+                    val selected = navBackStackEntry?.destination?.hierarchy?.any {
+                        it.route == item.screen.route
+                    } ?: false
+
                     BottomNavigationItem(
                         icon = {
                             Icon(item.icon, contentDescription = null)
@@ -39,9 +43,11 @@ fun MainScreen() {
                         label = {
                             Text(text = stringResource(id = item.titleResId))
                         },
-                        selected = currentRout == item.screen.route,
+                        selected = selected,
                         onClick = {
-                            navigationState.navigateTo(item.screen.route)
+                            if (!selected) {
+                                navigationState.navigateTo(item.screen.route)
+                            }
                         },
                         selectedContentColor = MaterialTheme.colors.onPrimary,
                         unselectedContentColor = MaterialTheme.colors.onSecondary
@@ -57,7 +63,7 @@ fun MainScreen() {
                     paddingValues = paddingValues,
                     onCommentsClickListener = {
                         commentsToPost.value = it
-                        navigationState.navigateTo(Screen.Comments.route)
+                        navigationState.navigateToComments()
                     }
                 )
             },
@@ -65,7 +71,7 @@ fun MainScreen() {
                 CommentsScreen(
                     feedPost = commentsToPost.value!!,
                     onBackPressed = {
-                        commentsToPost.value = null
+                        navigationState.navHostController.popBackStack()
                     }
                 )
             },
