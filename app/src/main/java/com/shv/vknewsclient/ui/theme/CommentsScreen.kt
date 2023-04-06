@@ -39,7 +39,7 @@ fun CommentsScreen(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(text = "Comments for FeedPost id: ${currentState.feedPost.id}") },
+                    title = { Text(text = "Comments for FeedPost id: ${currentState.feedPost.contentText}") },
                     backgroundColor = MaterialTheme.colors.primary,
                     navigationIcon = {
                         IconButton(onClick = { onBackPressed() }) {
