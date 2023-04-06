@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -68,4 +69,6 @@ dependencies {
 
     def lifecycle_version = "2.6.1"
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
+
+    implementation 'com.google.code.gson:gson:2.10.1'
 }
