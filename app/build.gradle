@@ -71,4 +71,5 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
 
     implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'io.coil-kt:coil-compose:2.3.0'
 }
