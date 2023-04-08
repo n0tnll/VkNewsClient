@@ -5,6 +5,13 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.compose.material.Button
+import androidx.compose.material.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.text.TextRange
 import com.shv.vknewsclient.ui.theme.MainScreen
 import com.shv.vknewsclient.ui.theme.VkNewsClientTheme
 import com.vk.api.sdk.VK
@@ -16,6 +23,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             VkNewsClientTheme {
+                val someState = remember {
+                    mutableStateOf(true)
+                }
+
+                Log.d("MainActivity", "Recomposition: ${someState.value}")
                 val authLauncher = rememberLauncherForActivityResult(
                     contract = VK.getVKAuthActivityResultContract(),
                     onResult = {
@@ -29,8 +41,17 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 )
-                authLauncher.launch(arrayListOf(VKScope.WALL))
-                MainScreen()
+                LaunchedEffect(key1 = Unit) {
+                    Log.d("MainActivity", "LaunchedEffect")
+                }
+                SideEffect {
+                    Log.d("MainActivity", "SideEffect")
+                }
+                Button(onClick = {
+                    someState.value = !someState.value
+                }) {
+                    Text(text = "Change state")
+                }
             }
         }
     }
