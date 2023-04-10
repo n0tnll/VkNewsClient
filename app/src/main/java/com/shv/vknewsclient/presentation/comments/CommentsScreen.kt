@@ -1,4 +1,4 @@
-package com.shv.vknewsclient.ui.theme
+package com.shv.vknewsclient.presentation.comments
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,11 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.shv.vknewsclient.CommentsViewModel
-import com.shv.vknewsclient.CommentsViewModelFactory
 import com.shv.vknewsclient.domain.FeedPost
 import com.shv.vknewsclient.domain.PostComment
-
 
 @Composable
 fun CommentsScreen(

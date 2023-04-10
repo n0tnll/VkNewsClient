@@ -1,4 +1,4 @@
-package com.shv.vknewsclient.ui.theme
+package com.shv.vknewsclient.presentation.news
 
 import com.shv.vknewsclient.domain.FeedPost
 

@@ -1,4 +1,4 @@
-package com.shv.vknewsclient.ui.theme
+package com.shv.vknewsclient.sampels
 
 import android.os.Handler
 import androidx.compose.foundation.layout.Column

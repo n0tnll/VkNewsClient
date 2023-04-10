@@ -1,4 +1,4 @@
-package com.shv.vknewsclient.ui.theme
+package com.shv.vknewsclient.presentation.comments
 
 import com.shv.vknewsclient.domain.FeedPost
 import com.shv.vknewsclient.domain.PostComment
