@@ -1,5 +1,6 @@
 package com.shv.vknewsclient.presentation.news
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -27,6 +28,7 @@ fun NewsFeedScreen(
 
     when (val currentState = screenState.value) {
         is NewsFeedScreenState.Posts -> {
+            Log.d("NewsFeedScreen", "${currentState.posts.size}")
             FeedPosts(
                 posts = currentState.posts,
                 viewModel = viewModel,
