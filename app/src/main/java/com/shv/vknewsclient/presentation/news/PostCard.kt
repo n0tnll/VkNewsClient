@@ -1,5 +1,6 @@
 package com.shv.vknewsclient.presentation.news
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -21,6 +22,7 @@ import com.shv.vknewsclient.R
 import com.shv.vknewsclient.domain.FeedPost
 import com.shv.vknewsclient.domain.StatisticItem
 import com.shv.vknewsclient.domain.StatisticType
+import com.shv.vknewsclient.ui.theme.DarkRed
 
 
 @Composable
@@ -56,7 +58,8 @@ fun PostCard(
                 onLikeClickListener = onLikeClickListener,
                 onCommentClickListener = onCommentClickListener,
                 onShareClickListener = onShareClickListener,
-                onViewsClickListener = onViewsClickListener
+                onViewsClickListener = onViewsClickListener,
+                isFavourite = feedPost.isFavourite
             )
         }
     }
@@ -106,6 +109,7 @@ private fun Statistics(
     onShareClickListener: (StatisticItem) -> Unit,
     onViewsClickListener: (StatisticItem) -> Unit,
     onCommentClickListener: (StatisticItem) -> Unit,
+    isFavourite: Boolean,
 ) {
     Row {
         Row(
@@ -114,7 +118,7 @@ private fun Statistics(
             val viewsItem = statistics.getItemByType(StatisticType.VIEWS)
             IconWithText(
                 iconResId = R.drawable.ic_views_counter,
-                text = viewsItem.count.toString(),
+                text = formatStatisticCount(viewsItem.count),
                 onItemClickListener = {
                     onViewsClickListener(viewsItem)
                 }
@@ -127,7 +131,7 @@ private fun Statistics(
             val sharesItem = statistics.getItemByType(StatisticType.SHARES)
             IconWithText(
                 iconResId = R.drawable.ic_share,
-                text = sharesItem.count.toString(),
+                text = formatStatisticCount(sharesItem.count),
                 onItemClickListener = {
                     onShareClickListener(sharesItem)
                 }
@@ -135,15 +139,16 @@ private fun Statistics(
             val commentItem = statistics.getItemByType(StatisticType.COMMENTS)
             IconWithText(
                 iconResId = R.drawable.ic_comment,
-                text = commentItem.count.toString(),
+                text = formatStatisticCount(commentItem.count),
                 onItemClickListener = {
                     onCommentClickListener(commentItem)
                 }
             )
             val likesItem = statistics.getItemByType(StatisticType.LIKES)
             IconWithText(
-                iconResId = R.drawable.ic_like,
-                text = likesItem.count.toString(),
+                iconResId = if (isFavourite) R.drawable.ic_like_set else R.drawable.ic_like,
+                text = formatStatisticCount(likesItem.count),
+                tint = if (isFavourite) DarkRed else MaterialTheme.colors.onSecondary,
                 onItemClickListener = {
                     onLikeClickListener(likesItem)
                 }
@@ -156,11 +161,22 @@ private fun List<StatisticItem>.getItemByType(type: StatisticType): StatisticIte
     return this.find { it.type == type } ?: throw IllegalStateException()
 }
 
+private fun formatStatisticCount(count: Int): String {
+    return if (count > 100_000) {
+        String.format("%sK", (count / 1000))
+    } else if (count > 1000) {
+        String.format("%.1fK", (count / 1000f))
+    } else {
+        count.toString()
+    }
+}
+
 @Composable
 private fun IconWithText(
     iconResId: Int,
     text: String,
-    onItemClickListener: () -> Unit
+    onItemClickListener: () -> Unit,
+    tint: Color = MaterialTheme.colors.onSecondary
 ) {
     Row(
         modifier = Modifier.clickable {
@@ -169,9 +185,10 @@ private fun IconWithText(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
+            modifier = Modifier.size(20.dp),
             painter = painterResource(id = iconResId),
             contentDescription = null,
-            tint = MaterialTheme.colors.onSecondary
+            tint = tint
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
