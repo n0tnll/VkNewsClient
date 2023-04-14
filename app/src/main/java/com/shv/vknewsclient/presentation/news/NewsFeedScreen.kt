@@ -35,9 +35,15 @@ fun NewsFeedScreen(
                 nextDataIsLoading = currentState.nextDataIsLoading
             )
         }
-        NewsFeedScreenState.Initial -> {
-
+        is NewsFeedScreenState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = DarkBlue)
+            }
         }
+        is NewsFeedScreenState.Initial -> {}
     }
 }
 
@@ -61,10 +67,9 @@ private fun FeedPosts(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(posts, key = { it.id }) { feedPost ->
-            Log.d("LazyColumn", "post.id: ${feedPost.id}")
             val dismissState = rememberDismissState()
             if (dismissState.isDismissed(DismissDirection.EndToStart)) {
-                viewModel.remove(feedPost)
+                viewModel.ignorePost(feedPost)
             }
             SwipeToDismiss(
                 modifier = Modifier.animateItemPlacement(),
@@ -74,12 +79,6 @@ private fun FeedPosts(
             ) {
                 PostCard(
                     feedPost = feedPost,
-                    onViewsClickListener = { statisticItem ->
-                        viewModel.updateCount(feedPost, statisticItem)
-                    },
-                    onShareClickListener = { statisticItem ->
-                        viewModel.updateCount(feedPost, statisticItem)
-                    },
                     onCommentClickListener = {
                         onCommentsClickListener(feedPost)
                     },
