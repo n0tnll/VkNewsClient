@@ -1,14 +1,13 @@
 package com.shv.vknewsclient.presentation.news
 
 import android.app.Application
-import android.util.Log
-import androidx.lifecycle.*
-import com.shv.vknewsclient.data.mapper.NewsFeedMapper
-import com.shv.vknewsclient.data.network.ApiFactory
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.shv.vknewsclient.data.repository.NewsFeedRepository
 import com.shv.vknewsclient.domain.FeedPost
 import com.shv.vknewsclient.domain.StatisticItem
-import com.vk.api.sdk.VKPreferencesKeyValueStorage
-import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.launch
 
 class NewsFeedViewModel(application: Application) : AndroidViewModel(application) {
@@ -18,7 +17,7 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
     private val _screenState = MutableLiveData<NewsFeedScreenState>(initialState)
     val screenState: LiveData<NewsFeedScreenState> = _screenState
 
-    private val mapper = NewsFeedMapper()
+    private val repository = NewsFeedRepository(application)
 
     init {
         loadNewsFeed()
@@ -26,12 +25,15 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
 
     private fun loadNewsFeed() {
         viewModelScope.launch {
-            val storage = VKPreferencesKeyValueStorage(getApplication())
-            val token = VKAccessToken.restore(storage) ?: return@launch
-            val response = ApiFactory.apiService.loadRecommendations(token.accessToken)
-            Log.d("loadRecommendations", response.toString())
-            val feedPosts = mapper.mapResponseToPosts(response)
+            val feedPosts = repository.loadNewsFeed()
             _screenState.value = NewsFeedScreenState.Posts(posts = feedPosts)
+        }
+    }
+
+    fun changeLikeStatus(feedPost: FeedPost) {
+        viewModelScope.launch {
+            repository.changeLikeStatus(feedPost)
+            _screenState.value = NewsFeedScreenState.Posts(posts = repository.feedPosts)
         }
     }
 

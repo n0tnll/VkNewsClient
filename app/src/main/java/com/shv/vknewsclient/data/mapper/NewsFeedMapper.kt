@@ -17,15 +17,15 @@ class NewsFeedMapper {
         val posts = responseDto.newsFeedContent.posts
         val groups = responseDto.newsFeedContent.groups
 
-        Log.d("mapResponseToPosts", "val posts = responseDto.newsFeedContent.posts: SIZE: ${posts.size}")
-        Log.d("mapResponseToPosts", "val groups = responseDto.newsFeedContent.groups SIZE: ${groups.size}")
+        Log.d("NewsFeedMapper", "posts.size: ${posts.size}")
+        Log.d("NewsFeedMapper", "groups.size: ${groups.size}")
 
         for (post in posts) {
-            if (post.id == null) continue
+            if (post.id == 0L) continue
             val group = groups.find { it.id == post.communityId.absoluteValue } ?: continue
-            Log.d("mapResponseToPosts", "В цикле. Post source id: ${post.text} | Group id: ${group.name}")
             val feedPost = FeedPost(
                 id = post.id,
+                communityId = post.communityId,
                 communityName = group.name,
                 publicationDate = mapTimestampToDate(post.date * 1000),
                 communityImageUrl = group.imageUrl,
@@ -37,11 +37,10 @@ class NewsFeedMapper {
                     StatisticItem(type = StatisticType.COMMENTS, count = post.comments.count),
                     StatisticItem(type = StatisticType.LIKES, count = post.likes.count)
                 ),
-                isFavourite = post.isFavourite
+                isLiked = post.likes.isUserLikes > 0
             )
             result.add(feedPost)
         }
-        Log.d("mapResponseToPosts", "list feedPost.size: ${result.size}")
         return result
     }
 

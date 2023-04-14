@@ -61,6 +61,7 @@ private fun FeedPosts(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(posts, key = { it.id }) { feedPost ->
+            Log.d("LazyColumn", "post.id: ${feedPost.id}")
             val dismissState = rememberDismissState()
             if (dismissState.isDismissed(DismissDirection.EndToStart)) {
                 viewModel.remove(feedPost)
@@ -82,8 +83,8 @@ private fun FeedPosts(
                     onCommentClickListener = {
                         onCommentsClickListener(feedPost)
                     },
-                    onLikeClickListener = { statisticItem ->
-                        viewModel.updateCount(feedPost, statisticItem)
+                    onLikeClickListener = { _ ->
+                        viewModel.changeLikeStatus(feedPost)
                     }
                 )
             }
