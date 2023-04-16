@@ -5,5 +5,7 @@
     <string name="navigation_item_favorite">Избранное</string>
     <string name="navigation_item_profile">Профиль</string>
     <string name="button_login">Войти</string>
+    <string name="comments">Комментарии</string>
+    <string name="no_comments">К этому посту нет комментариев</string>
     <integer name="com_vk_sdk_AppId">51607123</integer>
 </resources>

@@ -1,32 +1,41 @@
 package com.shv.vknewsclient.presentation.comments
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.shv.vknewsclient.data.repository.CommentsRepository
 import com.shv.vknewsclient.domain.FeedPost
-import com.shv.vknewsclient.domain.PostComment
+import kotlinx.coroutines.launch
 
 class CommentsViewModel(
-    feedPost: FeedPost
-) : ViewModel() {
+    feedPost: FeedPost,
+    application: Application
+) : AndroidViewModel(application) {
 
     private val _screenState = MutableLiveData<CommentsScreenState>(CommentsScreenState.Initial)
     val screenState: LiveData<CommentsScreenState>
         get() = _screenState
 
+    private val repository = CommentsRepository(application)
+
     init {
+        _screenState.value = CommentsScreenState.Loading
         loadComments(feedPost)
     }
 
     private fun loadComments(feedPost: FeedPost) {
-        val comments = mutableListOf<PostComment>().apply {
-            repeat(10) {
-                add(PostComment(id = it))
+        viewModelScope.launch {
+            val comments = repository.loadComments(feedPost)
+            if (comments.isNotEmpty()) {
+                _screenState.value = CommentsScreenState.Comments(
+                    feedPost = feedPost,
+                    comments = comments
+                )
+            } else {
+                _screenState.value = CommentsScreenState.NoComments
             }
         }
-        _screenState.value = CommentsScreenState.Comments(
-            feedPost = feedPost,
-            comments = comments
-        )
     }
 }

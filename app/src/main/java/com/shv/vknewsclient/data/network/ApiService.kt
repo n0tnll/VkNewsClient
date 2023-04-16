@@ -2,6 +2,7 @@ package com.shv.vknewsclient.data.network
 
 import com.shv.vknewsclient.data.model.LikesCountResponseDto
 import com.shv.vknewsclient.data.model.NewsFeedResponseDto
+import com.shv.vknewsclient.data.model.CommentsResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -24,6 +25,13 @@ interface ApiService {
         @Query("owner_id") ownerId: Long,
         @Query("item_id") postId: Long
     )
+
+    @GET("wall.getComments?v=5.131&extended=1&fields=photo_100")
+    suspend fun getPostComments(
+        @Query("access_token") token: String,
+        @Query("owner_id") ownerId: Long,
+        @Query("post_id") postId: Long
+    ): CommentsResponseDto
 
     @GET("likes.add?v=5.131&type=post")
     suspend fun addLike(

@@ -27,7 +27,7 @@ class NewsFeedMapper {
                 id = post.id,
                 communityId = post.communityId,
                 communityName = group.name,
-                publicationDate = mapTimestampToDate(post.date * 1000),
+                publicationDate = mapTimestampToDate(post.date),
                 communityImageUrl = group.imageUrl,
                 contentText = post.text,
                 contentImageUrl = post.attachments?.firstOrNull()?.photo?.photoUrls?.lastOrNull()?.url,
@@ -45,7 +45,7 @@ class NewsFeedMapper {
     }
 
     private fun mapTimestampToDate(timestamp: Long): String {
-        val date = Date(timestamp)
+        val date = Date(timestamp * 1000)
         return SimpleDateFormat("dd MMMM yyyy, HH:mm", Locale.getDefault()).format(date)
     }
 }
