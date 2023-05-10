@@ -3,11 +3,13 @@ package com.shv.vknewsclient.data.repository
 import android.app.Application
 import com.shv.vknewsclient.data.mapper.NewsFeedMapper
 import com.shv.vknewsclient.data.network.ApiFactory
-import com.shv.vknewsclient.domain.FeedPost
-import com.shv.vknewsclient.domain.StatisticItem
-import com.shv.vknewsclient.domain.StatisticType
+import com.shv.vknewsclient.domain.entity.AuthState
+import com.shv.vknewsclient.domain.entity.FeedPost
+import com.shv.vknewsclient.domain.entity.PostComment
+import com.shv.vknewsclient.domain.entity.StatisticItem
+import com.shv.vknewsclient.domain.entity.StatisticType
+import com.shv.vknewsclient.domain.repository.NewsFeedRepository
 import com.shv.vknewsclient.extensions.mergeWith
-import com.shv.vknewsclient.domain.AuthState
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.CoroutineScope
@@ -20,7 +22,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
 
-class NewsFeedRepository(application: Application) {
+class NewsFeedRepositoryImpl(application: Application): NewsFeedRepository {
 
     private val storage = VKPreferencesKeyValueStorage(application)
     private val token
@@ -61,7 +63,7 @@ class NewsFeedRepository(application: Application) {
 
     private val checkAuthStateEvents = MutableSharedFlow<Unit>(replay = 1)
 
-    val authStateFlow = flow {
+    private val authStateFlow = flow {
         checkAuthStateEvents.emit(Unit)
         checkAuthStateEvents.collect {
             val currentToken = token
@@ -75,7 +77,7 @@ class NewsFeedRepository(application: Application) {
         initialValue = AuthState.Initial
     )
 
-    suspend fun checkAuthState() {
+    override suspend fun checkAuthState() {
         checkAuthStateEvents.emit(Unit)
     }
 
@@ -85,7 +87,7 @@ class NewsFeedRepository(application: Application) {
 
     private var nextFrom: String? = null
 
-    val recommendation: StateFlow<List<FeedPost>> = loadedListFlow
+    private val recommendation: StateFlow<List<FeedPost>> = loadedListFlow
         .mergeWith(refreshedListFlow)
         .stateIn(
             scope = coroutineScope,
@@ -93,11 +95,32 @@ class NewsFeedRepository(application: Application) {
             initialValue = feedPosts
         )
 
-    suspend fun loadNextData() {
+    override fun getAuthStateFlow(): StateFlow<AuthState> = authStateFlow
+
+    override fun getRecommendations(): StateFlow<List<FeedPost>> = recommendation
+
+    override fun getComments(feedPost: FeedPost): StateFlow<List<PostComment>> = flow {
+        val response = apiService.getPostComments(
+            token = getAccessToken(),
+            ownerId = feedPost.communityId,
+            postId = feedPost.id
+        )
+        val comments = mapper.mapPostCommentsDtoToPostComments(response)
+        emit(comments)
+    }.retry {
+        delay(RETRY_TIMEOUT_MILLIS)
+        true
+    }.stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.Lazily,
+        initialValue = listOf()
+    )
+
+    override suspend fun loadNextData() {
         nextDataNeededEvents.emit(Unit)
     }
 
-    suspend fun ignorePost(feedPost: FeedPost) {
+    override suspend fun ignorePost(feedPost: FeedPost) {
         apiService.ignorePost(
             token = getAccessToken(),
             ownerId = feedPost.communityId,
@@ -107,7 +130,7 @@ class NewsFeedRepository(application: Application) {
         refreshedListFlow.emit(feedPosts)
     }
 
-    suspend fun changeLikeStatus(feedPost: FeedPost) {
+    override suspend fun changeLikeStatus(feedPost: FeedPost) {
         val response = if (feedPost.isLiked) {
             apiService.deleteLike(
                 token = getAccessToken(),

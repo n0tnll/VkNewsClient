@@ -22,7 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.shv.vknewsclient.domain.FeedPost
+import com.shv.vknewsclient.domain.entity.FeedPost
 import com.shv.vknewsclient.ui.theme.DarkBlue
 
 @Composable

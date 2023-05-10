@@ -1,7 +1,7 @@
 package com.shv.vknewsclient.presentation.comments
 
-import com.shv.vknewsclient.domain.FeedPost
-import com.shv.vknewsclient.domain.PostComment
+import com.shv.vknewsclient.domain.entity.FeedPost
+import com.shv.vknewsclient.domain.entity.PostComment
 
 sealed class CommentsScreenState {
 

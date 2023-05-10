@@ -5,7 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.shv.vknewsclient.domain.FeedPost
+import com.shv.vknewsclient.domain.entity.FeedPost
 
 
 class NavigationState(

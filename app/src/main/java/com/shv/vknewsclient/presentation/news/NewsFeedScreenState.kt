@@ -1,6 +1,6 @@
 package com.shv.vknewsclient.presentation.news
 
-import com.shv.vknewsclient.domain.FeedPost
+import com.shv.vknewsclient.domain.entity.FeedPost
 
 sealed class NewsFeedScreenState {
 

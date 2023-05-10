@@ -2,8 +2,9 @@ package com.shv.vknewsclient.presentation.comments
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import com.shv.vknewsclient.data.repository.CommentsRepository
-import com.shv.vknewsclient.domain.FeedPost
+import com.shv.vknewsclient.data.repository.NewsFeedRepositoryImpl
+import com.shv.vknewsclient.domain.entity.FeedPost
+import com.shv.vknewsclient.domain.usecase.GetCommentsUseCase
 import kotlinx.coroutines.flow.map
 
 class CommentsViewModel(
@@ -11,9 +12,10 @@ class CommentsViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private val repository = CommentsRepository(application)
+    private val repository = NewsFeedRepositoryImpl(application)
+    private val getCommentsUseCase = GetCommentsUseCase(repository)
 
-    val screenState = repository.loadComments(feedPost)
+    val screenState = getCommentsUseCase(feedPost)
         .map {
             CommentsScreenState.Comments(
                 feedPost = feedPost,

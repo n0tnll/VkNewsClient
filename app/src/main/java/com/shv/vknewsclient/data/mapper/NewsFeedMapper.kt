@@ -1,10 +1,12 @@
 package com.shv.vknewsclient.data.mapper
 
 import android.util.Log
+import com.shv.vknewsclient.data.model.CommentsResponseDto
 import com.shv.vknewsclient.data.model.NewsFeedResponseDto
-import com.shv.vknewsclient.domain.FeedPost
-import com.shv.vknewsclient.domain.StatisticItem
-import com.shv.vknewsclient.domain.StatisticType
+import com.shv.vknewsclient.domain.entity.FeedPost
+import com.shv.vknewsclient.domain.entity.PostComment
+import com.shv.vknewsclient.domain.entity.StatisticItem
+import com.shv.vknewsclient.domain.entity.StatisticType
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.absoluteValue
@@ -40,6 +42,31 @@ class NewsFeedMapper {
                 isLiked = post.likes.isUserLikes > 0
             )
             result.add(feedPost)
+        }
+        return result
+    }
+
+    fun mapPostCommentsDtoToPostComments(response: CommentsResponseDto): List<PostComment> {
+        val result = mutableListOf<PostComment>()
+
+        val comments = response.content.comments
+        val profiles = response.content.profiles
+
+        Log.d("PostCommentsMapper", "comments.size: ${comments.size}")
+        Log.d("PostCommentsMapper", "profiles.size: ${profiles.size}")
+
+        for (comment in comments) {
+            if (comment.text.isBlank()) continue
+            val author = profiles.find { it.id == comment.authorId } ?: continue
+            val postComment = PostComment(
+                id = comment.id,
+                authorName = String.format("%s %s", author.firstName, author.lastName),
+                authorAvatarUrl = author.photoUrl,
+                commentText = comment.text,
+                publicationDate = mapTimestampToDate(comment.date)
+            )
+
+            result.add(postComment)
         }
         return result
     }
