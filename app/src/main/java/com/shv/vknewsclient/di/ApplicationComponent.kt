@@ -1,7 +1,6 @@
 package com.shv.vknewsclient.di
 
 import android.content.Context
-import com.shv.vknewsclient.domain.entity.FeedPost
 import com.shv.vknewsclient.presentation.main.MainActivity
 import dagger.BindsInstance
 import dagger.Component
@@ -17,12 +16,13 @@ interface ApplicationComponent {
 
     fun inject(mainActivity: MainActivity)
 
+    fun getCommentsScreenComponentFactory(): CommentsScreenComponent.Factory
+
     @Component.Factory
     interface Factory {
 
         fun create(
-            @BindsInstance context: Context,
-            @BindsInstance feedPost: FeedPost
+            @BindsInstance context: Context
         ): ApplicationComponent
     }
 }
