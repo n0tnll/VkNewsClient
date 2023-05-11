@@ -24,11 +24,11 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -38,7 +38,7 @@ import coil.compose.AsyncImage
 import com.shv.vknewsclient.R
 import com.shv.vknewsclient.domain.entity.FeedPost
 import com.shv.vknewsclient.domain.entity.PostComment
-import com.shv.vknewsclient.presentation.NewsFeedApplication
+import com.shv.vknewsclient.presentation.getApplicationComponent
 import com.shv.vknewsclient.ui.theme.DarkBlue
 
 @Composable
@@ -46,14 +46,24 @@ fun CommentsScreen(
     feedPost: FeedPost,
     onBackPressed: () -> Unit
 ) {
-    val component =
-        (LocalContext.current.applicationContext as NewsFeedApplication)
-            .component
+    val component = getApplicationComponent()
             .getCommentsScreenComponentFactory()
             .create(feedPost)
+
     val viewModel: CommentsViewModel = viewModel(factory = component.getViewModelFactory())
     val screenState = viewModel.screenState.collectAsState(CommentsScreenState.Initial)
 
+    CommentsScreenContent(
+        onBackPressed = onBackPressed,
+        screenState = screenState
+    )
+}
+
+@Composable
+private fun CommentsScreenContent(
+    onBackPressed: () -> Unit,
+    screenState: State<CommentsScreenState>
+) {
     when (val currentState = screenState.value) {
         CommentsScreenState.Loading -> {
             Box(
@@ -101,7 +111,6 @@ fun CommentsScreen(
                 }
             }
         }
-
         CommentsScreenState.NoComments -> {
             Scaffold(
                 topBar = {
@@ -133,7 +142,6 @@ fun CommentsScreen(
                 }
             }
         }
-
         CommentsScreenState.Initial -> {}
     }
 }
