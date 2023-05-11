@@ -39,17 +39,17 @@ import coil.compose.AsyncImage
 import com.shv.vknewsclient.R
 import com.shv.vknewsclient.domain.entity.FeedPost
 import com.shv.vknewsclient.domain.entity.PostComment
+import com.shv.vknewsclient.presentation.ViewModelFactory
 import com.shv.vknewsclient.ui.theme.DarkBlue
 
 @Composable
 fun CommentsScreen(
     feedPost: FeedPost,
+    viewModelFactory: ViewModelFactory,
     onBackPressed: () -> Unit
 ) {
     val context = LocalContext.current.applicationContext as Application
-    val viewModel: CommentsViewModel = viewModel(
-        factory = CommentsViewModelFactory(feedPost, context)
-    )
+    val viewModel: CommentsViewModel = viewModel(factory = viewModelFactory)
     val screenState = viewModel.screenState.collectAsState(CommentsScreenState.Initial)
 
     when (val currentState = screenState.value) {
